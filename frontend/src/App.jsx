@@ -60,12 +60,16 @@ function App() {
         const provider = new ethers.BrowserProvider(window.ethereum);
         const network = await provider.getNetwork();
         
-        // Hardhat local network ID is 1337 as per config
-        if (network.chainId !== 1337n) {
-        setIsWrongNetwork(true);
-        setMessage({ text: `Wrong Network: Connected to Chain ID ${network.chainId}. Please switch to Localhost 8545 (Chain ID: 1337).`, type: 'error' });
-        return;
-      }
+        // Support Local (1337) and Sepolia (11155111)
+        const supportedChains = [1337n, 11155111n];
+        if (!supportedChains.includes(network.chainId)) {
+          setIsWrongNetwork(true);
+          setMessage({ 
+            text: `Wrong Network: Connected to Chain ID ${network.chainId}. Please switch to Localhost 8545 (1337) or Sepolia (11155111).`, 
+            type: 'error' 
+          });
+          return;
+        }
 
       // Check if contract exists at address
       const code = await provider.getCode(CONTRACT_ADDRESS);
